@@ -48,7 +48,8 @@ router.get('/contact', (req, res) => {
   res.render("contact", {
     layout: "layout",
     title: "Kapcsolat",
-    messageSent: false,
+    contactError: false,
+    contactSuccess: false,
     isAuth: req.isAuthenticated ? req.isAuthenticated() : false,
     isAdmin: req.user && req.user.isAdmin == 1,
     username: req.user ? req.user.username : ""

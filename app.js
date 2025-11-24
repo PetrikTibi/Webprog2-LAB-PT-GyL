@@ -291,5 +291,107 @@ app.get('/logout', function(req, res, next) {
   });
 });
 
+
+// Üzenetek menüpont
+app.get('/message', (req, res) => {
+    const sql = `
+    SELECT
+      id,
+      nev AS 'Név',
+      email AS 'Email',
+      telefon AS 'Telefon',
+      uzenet AS 'Üzenet',
+      kuldes_datum AS 'Küldés_dátuma'
+    FROM uzenetek
+    ORDER BY kuldes_datum DESC
+  `;
+
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error("Hiba az üzenetek lekérésekor:", err);
+            return res.render("message", {
+                title: "Üzenetek",
+                messages: [],
+                error: "Hiba történt az üzenetek lekérésekor."
+            });
+        }
+
+        res.render("message", {
+            title: "Üzenetek",
+            messages: result
+        });
+    });
+});
+
+// CRUD menüpont
+// ----- CRUD: Processzorok -----
+
+// LISTÁZÁS
+app.get('/crud', (req, res) => {
+    connection.query("SELECT * FROM processzor ORDER BY id DESC", (err, result) => {
+        if (err) {
+            console.error("Hiba lekérdezéskor:", err);
+            return res.render("crud", { title: "Processzorok", data: [] });
+        }
+        res.render("crud", { title: "Processzorok", data: result });
+    });
+});
+
+// ÚJ FELVÉTEL FORM
+app.get('/crud/new', (req, res) => {
+    res.render("crud_new", { title: "Új processzor" });
+});
+
+// ÚJ FELVÉTEL POST
+app.post('/crud/new', (req, res) => {
+    const { gyarto, tipus } = req.body;
+    connection.query(
+        "INSERT INTO processzor (gyarto, tipus) VALUES (?, ?)",
+        [gyarto, tipus],
+        (err) => {
+            if (err) console.error("Hiba beszúráskor:", err);
+            res.redirect('/crud');
+        }
+    );
+});
+
+// SZERKESZTÉS FORM
+app.get('/crud/edit/:id', (req, res) => {
+    connection.query(
+        "SELECT * FROM processzor WHERE id = ?",
+        [req.params.id],
+        (err, result) => {
+            if (err) console.error(err);
+            res.render("crud_edit", { title: "Processzor szerkesztése", item: result[0] });
+        }
+    );
+});
+
+// SZERKESZTÉS POST
+app.post('/crud/edit/:id', (req, res) => {
+    const { gyarto, tipus } = req.body;
+    connection.query(
+        "UPDATE processzor SET gyarto=?, tipus=? WHERE id=?",
+        [gyarto, tipus, req.params.id],
+        (err) => {
+            if (err) console.error(err);
+            res.redirect('/crud');
+        }
+    );
+});
+
+// TÖRLÉS
+app.post('/crud/delete/:id', (req, res) => {
+    connection.query(
+        "DELETE FROM processzor WHERE id=?",
+        [req.params.id],
+        (err) => {
+            if (err) console.error(err);
+            res.redirect('/crud');
+        }
+    );
+});
+
+
 // --- EXPORT ---
 module.exports = app;

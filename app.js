@@ -291,5 +291,39 @@ app.get('/logout', function(req, res, next) {
   });
 });
 
+
+
+app.get('/message', (req, res) => {
+    const sql = `
+    SELECT
+      id,
+      nev AS 'Név',
+      email AS 'Email',
+      telefon AS 'Telefon',
+      uzenet AS 'Üzenet',
+      kuldes_datum AS 'Küldés_dátuma'
+    FROM uzenetek
+    ORDER BY kuldes_datum DESC
+  `;
+
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error("Hiba az üzenetek lekérésekor:", err);
+            return res.render("message", {
+                title: "Üzenetek",
+                messages: [],
+                error: "Hiba történt az üzenetek lekérésekor."
+            });
+        }
+
+        res.render("message", {
+            title: "Üzenetek",
+            messages: result
+        });
+    });
+});
+
+
+
 // --- EXPORT ---
 module.exports = app;

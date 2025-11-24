@@ -1,0 +1,45 @@
+
+<section class="page-section" id="database">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="text-center mt-0">Üzenetek</h2>
+                <hr class="divider" />
+                <p class="text-muted text-center mb-4">
+
+                <div class="container mt-4">
+                  <h1>Processzorok</h1>
+                  <a href="/crud/new" class="btn btn-success mb-3">Új processzor</a>
+
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Gyártó</th>
+                        <th>Típus</th>
+                        <th>Műveletek</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% data.forEach((p) => { %>
+                        <tr>
+                          <td><%= p.id %></td>
+                          <td><%= p.gyarto %></td>
+                          <td><%= p.tipus %></td>
+                          <td>
+                            <a href="/crud/edit/<%= p.id %>" class="btn btn-warning btn-sm">Szerkesztés</a>
+                            <form action="/crud/delete/<%= p.id %>" method="POST" style="display:inline;">
+                              <button class="btn btn-danger btn-sm" onclick="return confirm('Biztos törlöd?');">Törlés</button>
+                            </form>
+                          </td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
